@@ -88,9 +88,23 @@ export function useCounterProgramAccount({ account }: { account: PublicKey }) {
     queryFn: () => program.account.journalEntryState.fetch(account),
   });
 
-  const createEntry = useMutation<string, Error, CreateEntryArgs>
+  
+  const updateEntry = useMutation<string, Error, CreateEntryArgs>({
 
-  return {
-    accountQuery,
-  };
+    mutationKey: [`journalEntry`, `update`, { cluster }],
+    mutationFn: async ({ title, message }) => {
+
+      return program.methods.updateJournalEntry(title, message).rpc();
+
+    },
+    onSuccess: (signature) => {
+      transactionToast(signature);
+      accounts.refetch();
+    },
+    onError: (error) => {
+      toast.error(`Error updating the entry: ${error.message}`);
+    },
+
+  });
+
 }
