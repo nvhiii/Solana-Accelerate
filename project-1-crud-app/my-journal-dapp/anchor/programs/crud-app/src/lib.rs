@@ -35,7 +35,7 @@ pub mod counter {
     }
 
     // instruction for CRUD(elete)
-    pub fn delete_journal_entry(ctx: Context<DeleteEntry>, _title: String) -> Result<()> {
+    pub fn delete_journal_entry(_ctx: Context<DeleteEntry>, _title: String) -> Result<()> {
 
       Ok(())
 
@@ -62,6 +62,25 @@ pub struct UpdateEntry<'info> {
 
   #[account(mut)]
   pub owner: Signer<'info>,
+
+  pub system_program: Program<'info, System>,
+
+}
+
+#[derive(Accounts)]
+#[instruction(title: String)]
+pub struct DeleteEntry<'info> {
+
+  #[account(
+    mut,
+    seeds = [title.as_bytes(), owner.key().as_ref()],
+    bump,
+    close = owner, // only owner should be able to close journal entry
+  )]
+  pub journal_entry: Account<'info, JournalEntryState>,
+
+  #[account(mut)]
+  pub owner: Signer<'info>, 
 
   pub system_program: Program<'info, System>,
 
