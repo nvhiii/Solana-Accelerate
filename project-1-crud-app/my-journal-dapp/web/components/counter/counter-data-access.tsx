@@ -107,4 +107,27 @@ export function useCounterProgramAccount({ account }: { account: PublicKey }) {
 
   });
 
+  const deleteEntry = useMutation({
+
+    mutationKey: [`journalEntry`, `delete`, { cluster }],
+    mutationFn: (title: string) => {
+
+      return program.methods.deleteJournalEntry(title).rpc();
+
+    },
+    onSuccess: (signature) => {
+      transactionToast(signature);
+      accounts.refetch();
+    },
+
+  });
+
+  return {
+
+    accountQuery,
+    updateEntry,
+    deleteEntry
+
+  };
+
 }
