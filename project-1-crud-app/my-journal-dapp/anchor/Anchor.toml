@@ -1,11 +1,11 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-crud = "HsBtyhQe2fdyWL3ebYWznRtjKe31ueNt3GMRzCRmTenU"
+crud = "9CzdMFuaTAchP6KyM1hAuzgnxBAqXMywKy28Jtfei7yo"
 
 [registry]
 url = "https://api.apr.dev"
