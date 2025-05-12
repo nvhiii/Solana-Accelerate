@@ -8,7 +8,7 @@
   },
   "instructions": [
     {
-      "name": "creaste_journal_entry",
+      "name": "create_journal_entry",
       "discriminator": [
         111,
         39,

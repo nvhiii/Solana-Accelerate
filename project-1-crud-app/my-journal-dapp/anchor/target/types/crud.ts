@@ -14,7 +14,7 @@ export type Crud = {
   },
   "instructions": [
     {
-      "name": "creasteJournalEntry",
+      "name": "createJournalEntry",
       "discriminator": [
         111,
         39,

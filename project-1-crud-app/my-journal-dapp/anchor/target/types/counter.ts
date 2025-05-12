@@ -1,5 +1,11 @@
-{
-  "address": "HsBtyhQe2fdyWL3ebYWznRtjKe31ueNt3GMRzCRmTenU",
+/**
+ * Program IDL in camelCase format in order to be used in JS/TS.
+ *
+ * Note that this is only a type helper and is not the actual IDL. The original
+ * IDL can be found at `target/idl/counter.json`.
+ */
+export type Counter = {
+  "address": "9CzdMFuaTAchP6KyM1hAuzgnxBAqXMywKy28Jtfei7yo",
   "metadata": {
     "name": "counter",
     "version": "0.1.0",
@@ -8,20 +14,20 @@
   },
   "instructions": [
     {
-      "name": "create_journal_entry",
+      "name": "createJournalEntry",
       "discriminator": [
-        111,
-        39,
-        228,
-        174,
-        111,
-        236,
-        223,
-        72
+        48,
+        65,
+        201,
+        186,
+        25,
+        41,
+        127,
+        0
       ],
       "accounts": [
         {
-          "name": "journal_entry",
+          "name": "journalEntry",
           "writable": true,
           "pda": {
             "seeds": [
@@ -42,7 +48,7 @@
           "signer": true
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -58,7 +64,7 @@
       ]
     },
     {
-      "name": "delete_journal_entry",
+      "name": "deleteJournalEntry",
       "discriminator": [
         156,
         50,
@@ -71,7 +77,7 @@
       ],
       "accounts": [
         {
-          "name": "journal_entry",
+          "name": "journalEntry",
           "writable": true,
           "pda": {
             "seeds": [
@@ -92,19 +98,19 @@
           "signer": true
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "_title",
+          "name": "title",
           "type": "string"
         }
       ]
     },
     {
-      "name": "update_journal_entry",
+      "name": "updateJournalEntry",
       "discriminator": [
         113,
         164,
@@ -117,7 +123,7 @@
       ],
       "accounts": [
         {
-          "name": "journal_entry",
+          "name": "journalEntry",
           "writable": true,
           "pda": {
             "seeds": [
@@ -138,13 +144,13 @@
           "signer": true
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "_title",
+          "name": "title",
           "type": "string"
         },
         {
@@ -156,7 +162,7 @@
   ],
   "accounts": [
     {
-      "name": "JournalEntryState",
+      "name": "journalEntryState",
       "discriminator": [
         113,
         86,
@@ -171,7 +177,7 @@
   ],
   "types": [
     {
-      "name": "JournalEntryState",
+      "name": "journalEntryState",
       "type": {
         "kind": "struct",
         "fields": [
@@ -191,4 +197,4 @@
       }
     }
   ]
-}
+};

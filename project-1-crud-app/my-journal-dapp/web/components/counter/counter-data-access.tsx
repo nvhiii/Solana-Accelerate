@@ -9,10 +9,19 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import { Cluster, Keypair, PublicKey } from '@solana/web3.js';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast';a
 import { useCluster } from '../cluster/cluster-data-access';
 import { useAnchorProvider } from '../solana/solana-provider';
 import { useTransactionToast } from '../ui/ui-layout';
+
+interface CreateEntryArgs {
+
+  title: string;
+  message: string;
+  owner: PublicKey;
+
+
+}
 
 export function useCounterProgram() {
   const { connection } = useConnection();
@@ -27,7 +36,7 @@ export function useCounterProgram() {
 
   const accounts = useQuery({
     queryKey: ['counter', 'all', { cluster }],
-    queryFn: () => program.account.counter.all(),
+    queryFn: () => program.account.journalEntryState.all(),
   });
 
   const getProgramAccount = useQuery({
@@ -35,28 +44,38 @@ export function useCounterProgram() {
     queryFn: () => connection.getParsedAccountInfo(programId),
   });
 
-  const initialize = useMutation({
-    mutationKey: ['counter', 'initialize', { cluster }],
-    mutationFn: (keypair: Keypair) =>
-      program.methods
-        .initialize()
-        .accounts({ counter: keypair.publicKey })
-        .signers([keypair])
-        .rpc(),
-    onSuccess: (signature) => {
-      transactionToast(signature);
-      return accounts.refetch();
+  // since create entry is part of overall journal program, put entry inside use case
+  const createEntry = useMutation<string, Error, CreateEntryArgs>({
+
+    mutationKey: ['journalEntry', 'create', { cluster } ],
+    mutationFn: async ({ title, message, owner }) => {
+
+      return program.methods.createJournalEntry(title, message).rpc();
+
     },
-    onError: () => toast.error('Failed to initialize account'),
+    onSuccess: (signature) => {
+
+      transactionToast(signature);
+      accounts.refetch();
+
+    },
+    onError: (error) => {
+
+      toast.error(`Error creating entry: ${error.message}`);
+
+    },
+
   });
 
   return {
+
     program,
-    programId,
     accounts,
     getProgramAccount,
-    initialize,
-  };
+    createEntry,
+
+  }
+
 }
 
 export function useCounterProgramAccount({ account }: { account: PublicKey }) {
@@ -66,54 +85,12 @@ export function useCounterProgramAccount({ account }: { account: PublicKey }) {
 
   const accountQuery = useQuery({
     queryKey: ['counter', 'fetch', { cluster, account }],
-    queryFn: () => program.account.counter.fetch(account),
+    queryFn: () => program.account.journalEntryState.fetch(account),
   });
 
-  const closeMutation = useMutation({
-    mutationKey: ['counter', 'close', { cluster, account }],
-    mutationFn: () =>
-      program.methods.close().accounts({ counter: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx);
-      return accounts.refetch();
-    },
-  });
-
-  const decrementMutation = useMutation({
-    mutationKey: ['counter', 'decrement', { cluster, account }],
-    mutationFn: () =>
-      program.methods.decrement().accounts({ counter: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx);
-      return accountQuery.refetch();
-    },
-  });
-
-  const incrementMutation = useMutation({
-    mutationKey: ['counter', 'increment', { cluster, account }],
-    mutationFn: () =>
-      program.methods.increment().accounts({ counter: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx);
-      return accountQuery.refetch();
-    },
-  });
-
-  const setMutation = useMutation({
-    mutationKey: ['counter', 'set', { cluster, account }],
-    mutationFn: (value: number) =>
-      program.methods.set(value).accounts({ counter: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx);
-      return accountQuery.refetch();
-    },
-  });
+  const createEntry = useMutation<string, Error, CreateEntryArgs>
 
   return {
     accountQuery,
-    closeMutation,
-    decrementMutation,
-    incrementMutation,
-    setMutation,
   };
 }

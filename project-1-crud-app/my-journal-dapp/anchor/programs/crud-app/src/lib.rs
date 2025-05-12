@@ -11,7 +11,7 @@ pub mod counter {
 
     // instruction for C(reate)RUD app
     // instruction handlers
-    pub fn creaste_journal_entry(ctx: Context<CreateEntry>, title: String, message: String ) -> Result<()> {
+    pub fn create_journal_entry(ctx: Context<CreateEntry>, title: String, message: String ) -> Result<()> {
 
       let journal_entry = &mut ctx.accounts.journal_entry;
       journal_entry.owner = *ctx.accounts.owner.key;
