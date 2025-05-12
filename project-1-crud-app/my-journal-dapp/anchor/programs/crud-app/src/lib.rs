@@ -8,14 +8,67 @@ declare_id!("HsBtyhQe2fdyWL3ebYWznRtjKe31ueNt3GMRzCRmTenU");
 pub mod counter {
     use super::*;
 
+
+    // instruction for C(reate)RUD app
     // instruction handlers
-    pub fn creaste_journal_entry(ctx: Context<CreateEntry>, ) -> Result<()> {
+    pub fn creaste_journal_entry(ctx: Context<CreateEntry>, title: String, message: String ) -> Result<()> {
+
+      let journal_entry = &mut ctx.accounts.journal_entry;
+      journal_entry.owner = *ctx.accounts.owner.key;
+      journal_entry.title = title;
+      journal_entry.message = message;
+      Ok(())
+
+    }
+
+    // CR(ead)UD app section
+    // no explicit instruction here, as we can simply query the blockchain lol
+
+    // instruction for CRU(pdate)D
+    pub fn update_journal_entry(ctx: Context<UpdateEntry>, _title: String, message: String) -> Result<()> {
+
+      let journal_entry = &mut ctx.accounts.journal_entry;
+      journal_entry.message = message;
+
+      Ok(())
+
+    }
+
+    // instruction for CRUD(elete)
+    pub fn delete_journal_entry(ctx: Context<DeleteEntry>, _title: String) -> Result<()> {
+
+      Ok(())
 
     }
 
 }
 
 #[derive(Accounts)]
+#[instruction(title: String)]
+pub struct UpdateEntry<'info> {
+
+  #[account(
+
+    mut,
+    seeds = [title.as_bytes(), owner.key().as_ref()],
+    bump,
+    // we may add or delete charas, hence rent will change
+    realloc = 8 + JournalEntryState::INIT_SPACE,
+    realloc::payer = owner,
+    realloc::zero = true, // before doing rent calc, we set to 0 for a clean slate
+
+  )]
+  pub journal_entry: Account<'info, JournalEntryState>,
+
+  #[account(mut)]
+  pub owner: Signer<'info>,
+
+  pub system_program: Program<'info, System>,
+
+}
+
+#[derive(Accounts)]
+#[instruction(title: String)] // pulling this from the instruction
 pub struct CreateEntry<'info> {
 
   #[account(
